@@ -1,10 +1,9 @@
 -- Question 1: Achieving 1NF
--- Transform the ProductDetail table so each row represents a single product for an order.
+-- The original ProductDetail table violates 1NF because the Products column contains multiple values.
+-- Solution: Each row should represent a single product for an order.
 
--- Original Table (for reference)
--- ProductDetail(OrderID, CustomerName, Products)
-
--- 1NF Table:
+-- 1NF Table Definition
+DROP TABLE IF EXISTS ProductDetail_1NF;
 CREATE TABLE ProductDetail_1NF (
     OrderID INT,
     CustomerName VARCHAR(100),
@@ -21,18 +20,20 @@ INSERT INTO ProductDetail_1NF (OrderID, CustomerName, Product) VALUES
 (103, 'Emily Clark', 'Phone');
 
 -- Question 2: Achieving 2NF
--- Remove partial dependencies by splitting the table.
+-- The original OrderDetails table is in 1NF but not 2NF due to partial dependency:
+-- CustomerName depends only on OrderID, not the full composite key (OrderID, Product).
 
--- Original Table (for reference)
--- OrderDetails(OrderID, CustomerName, Product, Quantity)
+-- Solution: Split into two tables to remove partial dependencies.
 
--- Step 1: Create Orders table (OrderID, CustomerName)
+-- Orders table: stores OrderID and CustomerName (OrderID is unique)
+DROP TABLE IF EXISTS Orders;
 CREATE TABLE Orders (
     OrderID INT PRIMARY KEY,
     CustomerName VARCHAR(100)
 );
 
--- Step 2: Create OrderProducts table (OrderID, Product, Quantity)
+-- OrderProducts table: stores OrderID, Product, and Quantity
+DROP TABLE IF EXISTS OrderProducts;
 CREATE TABLE OrderProducts (
     OrderID INT,
     Product VARCHAR(50),
